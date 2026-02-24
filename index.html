@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensaje Especial</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #121212; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            text-align: center;
+        }
+
+        .contenedor {
+            width: 90%;
+            max-width: 400px;
+        }
+
+        img {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        img:active {
+            transform: scale(0.95); 
+        }
+
+        #mensajeRevelado {
+            display: none;
+            padding: 20px;
+            background: #ffffff;
+            color: #333;
+            border-radius: 15px;
+            margin-top: 20px;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 { font-weight: 300; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor">
+        <h2 id="instruccion">Toca la imagen para continuar...</h2>
+        
+        <img src="foto.png" alt="Imagen Misteriosa" id="imgInteractiva">
+
+        <div id="mensajeRevelado">
+            <h3>¡Bienvenida mi!</h3>
+            <p>Aquí puedes escribir el texto que quieres que ella lea. ¡Funciona!</p>
+        </div>
+    </div>
+
+    <script>
+        const imagen = document.getElementById('imgInteractiva');
+        const mensaje = document.getElementById('mensajeRevelado');
+        const instruccion = document.getElementById('instruccion');
+
+        imagen.addEventListener('click', () => {
+            const password = prompt("Introduce la palabra secreta para descifrar:");
+
+            if (password && password.toLowerCase() === "25/07") {
+                imagen.style.display = "none";
+                instruccion.style.display = "none";
+                mensaje.style.display = "block";
+            } else if (password !== null) {
+                alert("Palabra incorrecta. Intenta de nuevo.");
+            }
+        });
+    </script>
+
+</body>
+</html>
