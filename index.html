@@ -113,11 +113,17 @@
             margin-top: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             animation: fadeIn 1.2s ease;
+            text-align: justify;
         }
 
         #mensajeRevelado h3 {
             color: #d81b60; 
             margin-top: 0;
+            text-align: center;
+        }
+
+        #mensajeRevelado p {
+            line-height: 1.6;
         }
 
         @keyframes fadeIn {
@@ -135,7 +141,7 @@
 
         <div id="seccionPassword">
             <p>Introduce nuestra fecha especial:</p>
-            <input type="text" id="inputClave" placeholder="Ej: 00/00/00" maxlength="10">
+            <input type="text" id="inputClave" placeholder="DD/MM/AA" maxlength="8">
             <br>
             <button id="btnVerificar">Descifrar</button>
             <p id="mensajeError"></p>
@@ -143,7 +149,7 @@
 
         <div id="mensajeRevelado">
             <h3>✨ ¡Bienvenida mi niña preciosaa! ✨</h3>
-            <p>Holaa mi amor, te traje acá para decirte lo mucho que significas para mí y lo importante que eres en mi vida, eres una chica maravillosa, preciosa, ocurrente, con buen corazón, ante mis ojos eres la mujer perfecta, con la que deseo estar toda la vida, llegaste a mi de la manera más inesperada posible y me enamore de ti por tu forma de ser, en como te espresas, con tu sentido del humor y con el cariño que me demostraste, cuando nos conocimos me enamore más de ti, me encantas demasiado, día a día me sigo enamorando de ti, deseo lograr todo contigo, ahora cumplimos un mes más y deseo que vayamos por muchos más, te deseare y amare por siempre mi Cielo.</p>
+            <p>Holaa mi amor, te traje acá para decirte lo mucho que significas para mí y lo importante que eres en mi vida. Eres una chica maravillosa, preciosa, ocurrente, con buen corazón; ante mis ojos eres la mujer perfecta con la que deseo estar toda la vida. Llegaste a mí de la manera más inesperada posible y me enamoré de ti por tu forma de ser, en cómo te expresas, con tu sentido del humor y con el cariño que me demostraste. Cuando nos conocimos me enamoré más de ti, me encantas demasiado. Día a día me sigo enamorando de ti, deseo lograr todo contigo. Ahora cumplimos un mes más y deseo que vayamos por muchos más. Te desearé y amaré por siempre mi Cielo.</p>
         </div>
     </div>
 
@@ -161,6 +167,27 @@
             instruccion.style.display = "none";
             seccionPassword.style.display = "block";
             inputClave.focus(); 
+        });
+
+        inputClave.addEventListener('input', function (e) {
+            let valor = e.target.value.replace(/\D/g, ''); 
+            
+            if (valor.length > 6) {
+                valor = valor.substring(0, 6);
+            }
+            
+            let valorFormateado = '';
+            if (valor.length > 0) {
+                valorFormateado += valor.substring(0, 2);
+            }
+            if (valor.length >= 3) {
+                valorFormateado += '/' + valor.substring(2, 4);
+            }
+            if (valor.length >= 5) {
+                valorFormateado += '/' + valor.substring(4, 6);
+            }
+            
+            e.target.value = valorFormateado;
         });
 
         function lanzarConfeti() {
@@ -181,7 +208,7 @@
         function verificarClave() {
             const password = inputClave.value;
 
-            if (password === "25/07/25") {
+            if (btoa(password) === "MjUvMDcvMjU=") {
                 seccionPassword.style.display = "none";
                 mensajeRevelado.style.display = "block";
                 lanzarConfeti();
