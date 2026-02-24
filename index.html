@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mensaje Especial</title>
+    <title>Para ti...</title>
     <style>
+        /* Estilos generales */
         body {
             margin: 0;
             padding: 0;
@@ -13,7 +14,8 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background-color: #121212; 
+            /* Un fondo oscuro con un toque violeta/azulado muy elegante */
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: white;
             text-align: center;
@@ -22,65 +24,174 @@
         .contenedor {
             width: 90%;
             max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
+        h2 { 
+            font-weight: 300; 
+            margin-bottom: 25px; 
+            letter-spacing: 1px;
+        }
+
+        /* Estilos de la imagen */
         img {
             width: 100%;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            /* Animación suave para indicar que se puede tocar */
+            animation: latido 3s infinite; 
         }
 
         img:active {
             transform: scale(0.95); 
         }
 
+        @keyframes latido {
+            0% { transform: scale(1); box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
+            50% { transform: scale(1.03); box-shadow: 0 20px 45px rgba(255,105,180,0.2); }
+            100% { transform: scale(1); box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
+        }
+
+        /* Sección de la contraseña (nueva) */
+        #seccionPassword {
+            display: none;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px); /* Efecto cristal */
+            box-sizing: border-box;
+            animation: fadeIn 0.8s ease;
+        }
+
+        input {
+            width: 80%;
+            padding: 12px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+            background: rgba(255,255,255,0.9);
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+            transition: transform 0.2s;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        #mensajeError {
+            color: #ff8e8e;
+            font-size: 14px;
+            margin-top: 15px;
+            min-height: 20px;
+        }
+
+        /* Mensaje Final */
         #mensajeRevelado {
             display: none;
-            padding: 20px;
-            background: #ffffff;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.95);
             color: #333;
-            border-radius: 15px;
+            border-radius: 20px;
             margin-top: 20px;
-            animation: fadeIn 1s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: fadeIn 1.2s ease;
+        }
+
+        #mensajeRevelado h3 {
+            color: #d81b60; /* Un tono rosado/rojizo bonito */
+            margin-top: 0;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        h2 { font-weight: 300; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
     <div class="contenedor">
-        <h2 id="instruccion">Toca la imagen para continuar...</h2>
+        <h2 id="instruccion">Toca la imagen...</h2>
         
-        <img src="foto.png" alt="Imagen Misteriosa" id="imgInteractiva">
+        <img src="foto.png" alt="Imagen Especial" id="imgInteractiva">
+
+        <div id="seccionPassword">
+            <p>Introduce nuestra fecha especial:</p>
+            <input type="text" id="inputClave" placeholder="Ej: 00/00" maxlength="5">
+            <br>
+            <button id="btnVerificar">Descifrar</button>
+            <p id="mensajeError"></p>
+        </div>
 
         <div id="mensajeRevelado">
-            <h3>¡Bienvenida mi!</h3>
-            <p>Aquí puedes escribir el texto que quieres que ella lea. ¡Funciona!</p>
+            <h3>✨ ¡Bienvenida mi niña preciosaa! ✨</h3>
+            <p>Aquí puedes escribir todo lo que sientes. Puedes poner párrafos largos, se adaptará automáticamente. ¡Espero que te guste mucho!</p>
         </div>
     </div>
 
     <script>
         const imagen = document.getElementById('imgInteractiva');
-        const mensaje = document.getElementById('mensajeRevelado');
         const instruccion = document.getElementById('instruccion');
+        const seccionPassword = document.getElementById('seccionPassword');
+        const inputClave = document.getElementById('inputClave');
+        const btnVerificar = document.getElementById('btnVerificar');
+        const mensajeError = document.getElementById('mensajeError');
+        const mensajeRevelado = document.getElementById('mensajeRevelado');
 
+        // Paso 1: Tocar la imagen muestra el cuadro de contraseña
         imagen.addEventListener('click', () => {
-            const password = prompt("Introduce la palabra secreta para descifrar(pista: es una fecha):");
+            imagen.style.display = "none";
+            instruccion.style.display = "none";
+            seccionPassword.style.display = "block";
+            inputClave.focus(); // Activa el teclado en el celular automáticamente
+        });
 
-            if (password && password.toLowerCase() === "25/07") {
-                imagen.style.display = "none";
-                instruccion.style.display = "none";
-                mensaje.style.display = "block";
-            } else if (password !== null) {
-                alert("Palabra incorrecta. Intenta de nuevo.");
+        // Paso 2: Función para verificar la clave
+        function verificarClave() {
+            const password = inputClave.value;
+
+            if (password === "25/07") {
+                // Éxito: Ocultar cuadro de clave y mostrar carta
+                seccionPassword.style.display = "none";
+                mensajeRevelado.style.display = "block";
+            } else {
+                // Error: Mostrar mensaje bonito sin usar alert()
+                mensajeError.innerText = "Esa no es... intenta con el formato: 00/00";
+                inputClave.value = ""; // Limpiar el campo
+                
+                // Efecto de vibración si se equivoca
+                seccionPassword.style.transform = "translateX(10px)";
+                setTimeout(() => seccionPassword.style.transform = "translateX(-10px)", 100);
+                setTimeout(() => seccionPassword.style.transform = "translateX(0)", 200);
+            }
+        }
+
+        // Ejecutar al tocar el botón
+        btnVerificar.addEventListener('click', verificarClave);
+
+        // También permite usar la tecla "Enter" o "Ir" del teclado del celular
+        inputClave.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                verificarClave();
             }
         });
     </script>
