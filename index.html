@@ -149,7 +149,7 @@
 
         <div id="mensajeRevelado">
             <h3>✨ ¡Bienvenida mi niña preciosaa! ✨</h3>
-            <p>Holaa mi amor, te traje acá para decirte lo mucho que significas para mí y lo importante que eres en mi vida. Eres una chica maravillosa, preciosa, ocurrente, con buen corazón; ante mis ojos eres la mujer perfecta con la que deseo estar toda la vida. Llegaste a mí de la manera más inesperada posible y me enamoré de ti por tu forma de ser, en cómo te expresas, con tu sentido del humor y con el cariño que me demostraste. Cuando nos conocimos me enamoré más de ti, me encantas demasiado. Día a día me sigo enamorando de ti, deseo lograr todo contigo. Ahora cumplimos un mes más y deseo que vayamos por muchos más. Te desearé y amaré por siempre mi Cielo.</p>
+            <p>Holaa mi amor, te traje acá para decirte lo mucho que significas para mí y lo importante que eres en mi vida. Eres una chica maravillosa, preciosa, ocurrente, con buen corazón, ante mis ojos eres la mujer perfecta con la que deseo estar toda la vida. Llegaste a mí de la manera más inesperada posible y me enamoré de ti por tu forma de ser, en cómo te expresas, por tu sentido del humor y por el cariño que me demostraste. Cuando nos conocimos me enamoré más de ti, me encantas demasiado. Día a día me sigo enamorando de ti, deseo lograr todo contigo. Ahora cumplimos un mes más y deseo que vayamos por muchos más. Te desearé y amaré por siempre mi Cielo.</p>
         </div>
     </div>
 
@@ -162,7 +162,24 @@
         const mensajeError = document.getElementById('mensajeError');
         const mensajeRevelado = document.getElementById('mensajeRevelado');
 
+        const imagenes = ["foto.png","foto1.png"];
+        let indiceActual = 0;
+        let intervaloCarrusel;
+
+        function cambiarImagen() {
+            imagen.style.opacity = 0;
+
+            setTimeout(() => {
+                indiceActual = (indiceActual + 1) % imagenes.length;
+                imagen.src = imagenes[indiceActual];
+                
+                imagen.style.opacity = 1;
+            }, 250); 
+        }
+        intervaloCarrusel = setInterval(cambiarImagen, 2000);
+
         imagen.addEventListener('click', () => {
+            clearInterval(intervaloCarrusel);
             imagen.style.display = "none";
             instruccion.style.display = "none";
             seccionPassword.style.display = "block";
