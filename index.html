@@ -162,7 +162,7 @@
         const mensajeError = document.getElementById('mensajeError');
         const mensajeRevelado = document.getElementById('mensajeRevelado');
 
-        const imagenes = ["foto.png","foto1.png"];
+        const imagenes = ["foto.png"];
         let indiceActual = 0;
         let intervaloCarrusel;
 
@@ -176,7 +176,7 @@
                 imagen.style.opacity = 1;
             }, 250); 
         }
-        intervaloCarrusel = setInterval(cambiarImagen, 2000);
+        intervaloCarrusel = setInterval(cambiarImagen, 4000);
 
         imagen.addEventListener('click', () => {
             clearInterval(intervaloCarrusel);
