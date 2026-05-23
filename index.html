@@ -10,17 +10,18 @@
     <style>
         body {
             margin: 0;
-            padding: 0;
+            padding: 40px 0; 
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             min-height: 100vh;
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: white;
             text-align: center;
-            overflow: hidden; 
+            overflow-y: auto; 
+            overflow-x: hidden; 
+            box-sizing: border-box;
         }
 
         .contenedor {
@@ -30,6 +31,7 @@
             flex-direction: column;
             align-items: center;
             z-index: 10;
+            margin: auto; 
         }
 
         h2 { 
@@ -38,7 +40,6 @@
             letter-spacing: 1px;
         }
 
-        /* Imagen de la pantalla inicial */
         #imgInteractiva {
             width: 100%;
             border-radius: 20px;
@@ -105,10 +106,9 @@
             min-height: 20px;
         }
 
-        /* --- SECCIÓN DEL MENSAJE FINAL Y TARJETAS --- */
         #mensajeRevelado {
             display: none;
-            position: relative; /* Importante para que las tarjetas cubran este div */
+            position: relative; 
             background: rgba(255, 255, 255, 0.95);
             color: #333;
             border-radius: 20px;
@@ -116,25 +116,24 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             animation: fadeIn 1.2s ease;
             text-align: justify;
-            overflow: hidden; /* Evita que las tarjetas sobresalgan al girar */
+            overflow: hidden; 
         }
 
-        /* Contenedor del texto e imagen final */
         #contenidoFinal {
-            padding: 30px;
+            padding: 10px;
         }
 
         #contenidoFinal h3 {
             color: #d81b60; 
-            margin-top: 0;
+            margin-top: 2;
+            margin-bottom: 3;
             text-align: center;
         }
 
-        /* Estilo para la imagen que va dentro del mensaje */
         .imagen-mensaje {
             width: 100%;
-            border-radius: 15px;
-            margin: 15px 0;
+            border-radius: 30px;
+            margin: 5px 0;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
@@ -143,7 +142,6 @@
             margin-bottom: 0;
         }
 
-        /* Contenedor de las tarjetas sobrepuestas */
         #contenedorTarjetas {
             position: absolute;
             top: 0;
@@ -152,9 +150,8 @@
             height: 100%;
             z-index: 20;
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2 columnas */
-            grid-template-rows: repeat(3, 1fr);    /* 3 filas = 6 tarjetas */
-            background-color: white; /* Fondo blanco extra para ocultar texto mientras cargan */
+            grid-template-columns: repeat(2, 1fr); 
+            grid-template-rows: repeat(3, 1fr);    
         }
 
         .tarjeta-wrapper {
@@ -172,7 +169,6 @@
             cursor: pointer;
         }
 
-        /* Clases dinámicas para girar y desaparecer */
         .tarjeta.volteada {
             transform: rotateY(180deg);
         }
@@ -191,11 +187,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 15px;
             box-sizing: border-box;
             text-align: center;
             font-size: 14px;
             font-weight: bold;
+            padding: 10px; 
         }
 
         .tarjeta-dorso {
@@ -204,6 +200,15 @@
             color: #d81b60;
             border: 2px solid #f8bbd0;
             box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+        }
+
+        .img-tarjeta {
+            max-width: 100%;  
+            max-height: 100%; 
+            width: auto;      
+            height: auto;     
+            object-fit: contain; 
+            border-radius: 10px;
         }
 
         @keyframes fadeIn {
@@ -229,9 +234,9 @@
 
         <div id="mensajeRevelado">
             <div id="contenidoFinal">
-                <h3>✨ ¡Bienvenida mi niña preciosaa! ✨</h3>
-                <img src="foto_mensaje.png" alt="Nosotros" class="imagen-mensaje">
-                <p>Aquí puedes escribir todo tu mensaje. Cuando ella termine de descubrir y quitar todas las tarjetas, podrá leer todo esto y ver la imagen superior. Quedará como un detalle súper romántico e inolvidable.</p>
+                <h3>✨ ¡Bienvenida otra vez mi niña preciosaa! ✨</h3>
+                <img src="nosotros.jpeg" alt="Nosotros" class="imagen-mensaje">
+                <p>Que hermoso han sido estos 10 meses a tu lado y quiero cumplir contigo muchos meses más más bien te deseo para toda la vida mi Cielo, gracias a ti aprendl lo que es amar de verdad, como amo recordar todo lo que nos llevo a esto, la primera vez que te vi no sabes lo feliz, nervioso y fascinado que estaba, me encanta completamente todo de ti, eres muy encantadora mi niña preciosa, esto no es solo un mes más juntos, es una prueba más de que estamos destinados a estar por siempre juntos amándonos, te amooo demasiado mi Cielo💞</p>
             </div>
 
             <div id="contenedorTarjetas"></div>
@@ -239,7 +244,6 @@
     </div>
 
     <script>
-        // Elementos del DOM
         const imagen = document.getElementById('imgInteractiva');
         const instruccion = document.getElementById('instruccion');
         const seccionPassword = document.getElementById('seccionPassword');
@@ -249,7 +253,6 @@
         const mensajeRevelado = document.getElementById('mensajeRevelado');
         const contenedorTarjetas = document.getElementById('contenedorTarjetas');
 
-        // Configuración inicial de la imagen principal
         const imagenes = ["foto.png"];
         let indiceActual = 0;
         let intervaloCarrusel;
@@ -272,7 +275,6 @@
             inputClave.focus(); 
         });
 
-        // Formato de la fecha
         inputClave.addEventListener('input', function (e) {
             let valor = e.target.value.replace(/\D/g, ''); 
             if (valor.length > 6) valor = valor.substring(0, 6);
@@ -285,29 +287,25 @@
             e.target.value = valorFormateado;
         });
 
-        // Confeti
         function lanzarConfeti() {
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6, x: 0.2 }, colors: ['#ff69b4', '#ff1493', '#ffffff'] });
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6, x: 0.8 }, colors: ['#ff69b4', '#ff1493', '#ffffff'] });
         }
 
-        // --- SISTEMA DE TARJETAS ---
-        const frasesTarjetas = [
-            "Eres mi sol ☀️",
-            "Me haces sonreír 😊",
-            "Amo tus abrazos 🤗",
-            "Mi persona favorita 💕",
-            "Eres mi paz ✨",
-            "Te quiero mucho ❤️"
+        const datosTarjetas = [
+            { frase: "Eres la niña que me tiene encantado💓​", color: "#D8BFD8", img: "foto1.png" },
+            { frase: "Mis dias son tan felices con tan solo pensar en ti🙂​", color: "#E6E6FA", img: "Kuromi.png" },
+            { frase: "Amo cuando te tengo en mis brazos😍​", color: "#FFD1DC", img: "kity.webp" },
+            { frase: "Eres mucho mas de lo que pude desear​🩷​", color: "#FFB6C1", img: "melody.webp" },
+            { frase: "Deseo estar contigo toda la vida💖", color: "#B0E0E6", img: "nev.webp" },
+            { frase: "Eres lo mejor y lo mas bonito de mi mundo💞​", color: "#89CFF0", img: "cyna.webp" }
         ];
 
-        // Colores sacados de tu imagen de ejemplo
-        const coloresPasteles = ["#C69B9B", "#EED2D2", "#7A6565", "#E79B9B", "#F5D6D6", "#593D3D"];
 
         function inicializarTarjetas() {
             let tarjetasOcultas = 0;
 
-            frasesTarjetas.forEach((frase, index) => {
+            datosTarjetas.forEach((dato, index) => {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'tarjeta-wrapper';
                 
@@ -316,31 +314,31 @@
                 
                 const frente = document.createElement('div');
                 frente.className = 'tarjeta-cara tarjeta-frente';
-                frente.style.backgroundColor = coloresPasteles[index];
+                frente.style.backgroundColor = dato.color;
+                
+                const imagenTarjeta = document.createElement('img');
+                imagenTarjeta.src = dato.img;
+                imagenTarjeta.className = 'img-tarjeta';
+                frente.appendChild(imagenTarjeta);
                 
                 const dorso = document.createElement('div');
                 dorso.className = 'tarjeta-cara tarjeta-dorso';
-                dorso.innerText = frase;
+                dorso.innerText = dato.frase;
 
                 tarjeta.appendChild(frente);
                 tarjeta.appendChild(dorso);
                 wrapper.appendChild(tarjeta);
                 
-                // Lógica de clics en las tarjetas
                 tarjeta.addEventListener('click', function() {
                     if (!this.classList.contains('volteada')) {
-                        // Primer clic: Gira la tarjeta
                         this.classList.add('volteada');
                     } else if (!this.classList.contains('oculta')) {
-                        // Segundo clic: Desaparece la tarjeta
                         this.classList.add('oculta');
                         tarjetasOcultas++;
                         
-                        // Si todas se ocultaron, quitamos el contenedor para poder tocar el texto base
-                        if (tarjetasOcultas === frasesTarjetas.length) {
+                        if (tarjetasOcultas === datosTarjetas.length) {
                             setTimeout(() => {
                                 contenedorTarjetas.style.pointerEvents = 'none';
-                                contenedorTarjetas.style.background = 'transparent';
                             }, 500);
                         }
                     }
@@ -350,7 +348,6 @@
             });
         }
 
-        // Verificación de clave
         function verificarClave() {
             const password = inputClave.value;
 
@@ -358,7 +355,7 @@
                 seccionPassword.style.display = "none";
                 mensajeRevelado.style.display = "block";
                 
-                inicializarTarjetas(); // Creamos las tarjetas justo al descubrir la clave
+                inicializarTarjetas(); 
                 lanzarConfeti();
                 
             } else {
