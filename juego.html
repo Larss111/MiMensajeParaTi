@@ -120,6 +120,9 @@
     <div id="juegoContenedor">
         <a href="index.html" id="btnVolver">← Inicio</a>
         
+        <!-- Elemento de Audio para los puntos -->
+        <audio id="sonidoPunto" src="musica/puntos.mp3" preload="auto"></audio>
+
         <!-- Elemento para reproducir el GIF en tiempo real -->
         <img src="imagenes/cina.gif" id="personajeGif" alt="Cinnamoroll">
         
@@ -152,6 +155,7 @@
         const puntosFinales = document.getElementById('puntosFinales');
         const recordFinal = document.getElementById('recordFinal');
         const personajeGif = document.getElementById('personajeGif');
+        const sonidoPunto = document.getElementById('sonidoPunto'); // Captura el audio
 
         let juegoActivo = false;
         let animId;
@@ -174,7 +178,7 @@
         let frameCount = 0;
         let velocidadJuego = 2.2;
 
-        // Generar fondo de estrellas estáticas
+        // fondo de estrellas estáticas
         for (let i = 0; i < 30; i++) {
             estrellas.push({
                 x: Math.random() * canvas.width,
@@ -230,8 +234,7 @@
             velocidadJuego = 1.8;
             frameCount = 0;
             juegoActivo = true;
-
-            // Mostrar el GIF del personaje
+            
             personajeGif.style.display = 'block';
 
             if (animId) cancelAnimationFrame(animId);
@@ -312,6 +315,10 @@
                 if (!obs.pasado && obs.x + obs.ancho < cinna.x) {
                     obs.pasado = true;
                     puntos++;
+                    
+                    // Reproducir el sonido al anotar
+                    sonidoPunto.currentTime = 0; // Reinicia el audio por si se solapa
+                    sonidoPunto.play().catch(() => {}); // catch para evitar errores si el navegador bloquea el autoplay
                 }
 
                 // Eliminar obstáculos fuera de pantalla
