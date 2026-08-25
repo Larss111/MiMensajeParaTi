@@ -7,7 +7,7 @@
     <style>
         body {
             margin: 0;
-            padding: 40px 0; 
+            padding: 30px 0; 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -22,7 +22,7 @@
 
         .contenedor {
             width: 90%;
-            max-width: 400px;
+            max-width: 420px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -30,10 +30,58 @@
             margin: auto; 
         }
 
+        #contadorBox {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px;
+            padding: 15px 10px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .contador-titulo {
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            color: #ffb6c1;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .contador-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+        }
+
+        .contador-item {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 8px 2px;
+        }
+
+        .contador-numero {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffffff;
+            display: block;
+        }
+
+        .contador-etiqueta {
+            font-size: 10px;
+            color: #d1c4e9;
+            text-transform: lowercase;
+        }
+
         h2 { 
             font-weight: 300; 
-            margin-bottom: 25px; 
+            margin-bottom: 20px; 
             letter-spacing: 1px;
+            font-size: 20px;
         }
 
         #imgInteractiva {
@@ -55,7 +103,7 @@
             100% { transform: scale(1); box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
         }
 
-        #seccionPassword {
+        #seccionPassword, #seccionOpciones {
             display: none;
             width: 100%;
             background: rgba(255, 255, 255, 0.1);
@@ -78,7 +126,7 @@
             background: rgba(255,255,255,0.9);
         }
 
-        button {
+        .btn-accion {
             background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
             color: white;
             border: none;
@@ -88,11 +136,25 @@
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
-            transition: transform 0.2s;
+            transition: transform 0.2s, background 0.3s;
+            text-decoration: none;
+            display: inline-block;
         }
 
-        button:active {
+        .btn-accion:active {
             transform: scale(0.95);
+        }
+
+        .btn-menu {
+            width: 80%;
+            margin: 10px 0;
+            padding: 15px 20px;
+            font-size: 17px;
+        }
+
+        .btn-jugar {
+            background: linear-gradient(45deg, #89CFF0, #a1c4fd);
+            box-shadow: 0 5px 15px rgba(137, 207, 240, 0.4);
         }
 
         #mensajeError {
@@ -110,6 +172,33 @@
 </head>
 <body>
     <div class="contenedor">
+        <!-- Tarjeta del Contador -->
+        <div id="contadorBox">
+            <div class="contador-titulo"> Tiempo juntos </div>
+            <div class="contador-grid">
+                <div class="contador-item">
+                    <span class="contador-numero" id="cntAnios">0</span>
+                    <span class="contador-etiqueta">años</span>
+                </div>
+                <div class="contador-item">
+                    <span class="contador-numero" id="cntMeses">0</span>
+                    <span class="contador-etiqueta">meses</span>
+                </div>
+                <div class="contador-item">
+                    <span class="contador-numero" id="cntDias">0</span>
+                    <span class="contador-etiqueta">días</span>
+                </div>
+                <div class="contador-item">
+                    <span class="contador-numero" id="cntHoras">0</span>
+                    <span class="contador-etiqueta">hrs</span>
+                </div>
+                <div class="contador-item">
+                    <span class="contador-numero" id="cntMinutos">0</span>
+                    <span class="contador-etiqueta">min</span>
+                </div>
+            </div>
+        </div>
+
         <h2 id="instruccion">Toca la imagen...</h2>
         <img src="imagenes/foto.png" alt="Imagen Especial" id="imgInteractiva">
 
@@ -117,20 +206,70 @@
             <p>Introduce nuestra fecha especial:</p>
             <input type="text" id="inputClave" placeholder="DD/MM/AA" maxlength="8">
             <br>
-            <button id="btnVerificar">Descifrar</button>
+            <button class="btn-accion" id="btnVerificar">Descifrar</button>
             <p id="mensajeError"></p>
+        </div>
+
+        <div id="seccionOpciones">
+            <p style="margin-bottom: 20px; font-size: 18px;">¿Qué deseas hacer primero?</p>
+            <a href="mensaje.html" class="btn-accion btn-menu">💌 Mi Mensaje</a>
+            <br>
+            <a href="juego.html" class="btn-accion btn-menu btn-jugar">🎮 Jugar</a>
         </div>
     </div>
 
     <script>
+        const fechaInicio = new Date(2025, 6, 25, 5, 45, 0); 
+
+        function actualizarContador() {
+            const ahora = new Date();
+            
+            let anios = ahora.getFullYear() - fechaInicio.getFullYear();
+            let meses = ahora.getMonth() - fechaInicio.getMonth();
+            let dias = ahora.getDate() - fechaInicio.getDate();
+            let horas = ahora.getHours() - fechaInicio.getHours();
+            let minutos = ahora.getMinutes() - fechaInicio.getMinutes();
+
+            if (minutos < 0) {
+                horas--;
+                minutos += 60;
+            }
+
+            if (horas < 0) {
+                dias--;
+                horas += 24;
+            }
+
+            if (dias < 0) {
+                meses--;
+                const ultimoDiaMesAnterior = new Date(ahora.getFullYear(), ahora.getMonth(), 0).getDate();
+                dias += ultimoDiaMesAnterior;
+            }
+
+            if (meses < 0) {
+                anios--;
+                meses += 12;
+            }
+
+            document.getElementById('cntAnios').innerText = Math.max(0, anios);
+            document.getElementById('cntMeses').innerText = Math.max(0, meses);
+            document.getElementById('cntDias').innerText = Math.max(0, dias);
+            document.getElementById('cntHoras').innerText = Math.max(0, horas);
+            document.getElementById('cntMinutos').innerText = Math.max(0, minutos);
+        }
+
+        actualizarContador();
+        setInterval(actualizarContador, 60000);
+
         const imagen = document.getElementById('imgInteractiva');
         const instruccion = document.getElementById('instruccion');
         const seccionPassword = document.getElementById('seccionPassword');
+        const seccionOpciones = document.getElementById('seccionOpciones');
         const inputClave = document.getElementById('inputClave');
         const btnVerificar = document.getElementById('btnVerificar');
         const mensajeError = document.getElementById('mensajeError');
 
-        const imagenes = ["foto.png"];
+        const imagenes = ["imagenes/foto.png"];
         let indiceActual = 0;
         let intervaloCarrusel;
 
@@ -166,9 +305,9 @@
 
         function verificarClave() {
             const password = inputClave.value;
-            // Si la clave es correcta, redirige al segundo archivo html
             if (btoa(password) === "MjUvMDcvMjU=") {
-                window.location.href = "mensaje.html";
+                seccionPassword.style.display = "none";
+                seccionOpciones.style.display = "block";
             } else {
                 mensajeError.innerText = "Esa no es... intenta con el formato: 00/00/00";
                 inputClave.value = ""; 

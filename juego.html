@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cinnamoroll Fly!</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: white;
+            overflow: hidden;
+        }
+
+        #juegoContenedor {
+            position: relative;
+            width: 100%;
+            max-width: 380px;
+            height: 560px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            background: #1a1a2e;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* GIF del personaje superpuesto */
+        #personajeGif {
+            position: absolute;
+            width: 46px;
+            height: auto;
+            pointer-events: none;
+            z-index: 10;
+            display: none;
+            transform-origin: center center;
+        }
+
+        /* Botón superior de volver */
+        #btnVolver {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 6px 12px;
+            font-size: 13px;
+            text-decoration: none;
+            font-weight: bold;
+            z-index: 50;
+        }
+
+        /* Pantallas superpuestas (Inicio y Game Over) */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 12, 41, 0.85);
+            backdrop-filter: blur(6px);
+            z-index: 40;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .overlay h1 {
+            color: #89CFF0;
+            margin-bottom: 10px;
+            font-size: 26px;
+        }
+
+        .overlay p {
+            color: #f1f1f1;
+            font-size: 14px;
+            margin: 6px 0;
+        }
+
+        .btn-juego {
+            background: linear-gradient(45deg, #89CFF0, #ff8e8e);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(137, 207, 240, 0.4);
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="juegoContenedor">
+        <a href="index.html" id="btnVolver">← Inicio</a>
+        
+        <!-- Elemento para reproducir el GIF en tiempo real -->
+        <img src="imagenes/cina.gif" id="personajeGif" alt="Cinnamoroll">
+        
+        <canvas id="canvasJuego" width="360" height="540"></canvas>
+
+        <!-- Pantalla Inicio -->
+        <div id="pantallaInicio" class="overlay">
+            <h1>☁️ Cinnamoroll Fly ☁️</h1>
+            <p>Toca la pantalla para elevarte y esquivar los obstáculos.</p>
+            <button class="btn-juego" onclick="iniciarJuego()">¡Empezar!</button>
+        </div>
+
+        <!-- Pantalla Game Over -->
+        <div id="pantallaFin" class="overlay" style="display: none;">
+            <h1 style="color: #ff6b6b;">¡Ups! 💔</h1>
+            <p id="puntosFinales">Puntuación: 0</p>
+            <p id="recordFinal" style="color: #ffd700;">Récord: 0</p>
+            <button class="btn-juego" onclick="iniciarJuego()">Reintentar</button>
+            <br>
+            <a href="mensaje.html" style="color: #ffb6c1; text-decoration: none; font-size: 13px; margin-top: 10px;">Ver mi mensaje 💌</a>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvasJuego');
+        const ctx = canvas.getContext('2d');
+
+        const pantallaInicio = document.getElementById('pantallaInicio');
+        const pantallaFin = document.getElementById('pantallaFin');
+        const puntosFinales = document.getElementById('puntosFinales');
+        const recordFinal = document.getElementById('recordFinal');
+        const personajeGif = document.getElementById('personajeGif');
+
+        let juegoActivo = false;
+        let animId;
+        let puntos = 0;
+        let record = localStorage.getItem('cinna_record') || 0;
+
+        // Propiedades del jugador
+        const cinna = {
+            x: 50,
+            y: 200,
+            w: 42,
+            h: 32,
+            gravedad: 0.28,
+            salto: -5.5,
+            velocidad: 0
+        };
+
+        let obstaculos = [];
+        let estrellas = [];
+        let frameCount = 0;
+        let velocidadJuego = 2.2;
+
+        // Generar fondo de estrellas estáticas
+        for (let i = 0; i < 30; i++) {
+            estrellas.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                r: Math.random() * 1.5
+            });
+        }
+
+        function saltar() {
+            if (juegoActivo) {
+                cinna.velocidad = cinna.salto;
+            }
+        }
+
+        // Controles táctiles y teclado
+        window.addEventListener('touchstart', (e) => {
+            if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') {
+                saltar();
+            }
+        });
+        window.addEventListener('mousedown', (e) => {
+            if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') {
+                saltar();
+            }
+        });
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') saltar();
+        });
+
+        function crearObstaculo() {
+            const espacio = 160; 
+            const minH = 60;
+            const maxH = canvas.height - espacio - minH;
+            const altoSuperior = Math.floor(Math.random() * (maxH - minH + 1)) + minH;
+
+            obstaculos.push({
+                x: canvas.width,
+                altoSup: altoSuperior,
+                altoInf: canvas.height - (altoSuperior + espacio),
+                ancho: 45,
+                pasado: false
+            });
+        }
+
+        function iniciarJuego() {
+            pantallaInicio.style.display = 'none';
+            pantallaFin.style.display = 'none';
+            
+            cinna.y = 200;
+            cinna.velocidad = 0;
+            obstaculos = [];
+            puntos = 0;
+            velocidadJuego = 1.8;
+            frameCount = 0;
+            juegoActivo = true;
+
+            // Mostrar el GIF del personaje
+            personajeGif.style.display = 'block';
+
+            if (animId) cancelAnimationFrame(animId);
+            bucleJuego();
+        }
+
+        function finalizarJuego() {
+            juegoActivo = false;
+            cancelAnimationFrame(animId);
+            personajeGif.style.display = 'none';
+
+            if (puntos > record) {
+                record = puntos;
+                localStorage.setItem('cinna_record', record);
+            }
+            puntosFinales.innerText = `Puntuación: ${puntos}`;
+            recordFinal.innerText = `Récord: ${record}`;
+            pantallaFin.style.display = 'flex';
+        }
+
+        function bucleJuego() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Dibujar estrellas de fondo
+            ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+            estrellas.forEach(e => {
+                ctx.beginPath();
+                ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Física del personaje
+            cinna.velocidad += cinna.gravedad;
+            cinna.y += cinna.velocidad;
+
+            // Posicionar el GIF en base a las coordenadas del juego
+            personajeGif.style.left = cinna.x + 'px';
+            personajeGif.style.top = cinna.y + 'px';
+
+            // Crear obstáculos periódicamente
+            if (frameCount % 100 === 0) {
+                crearObstaculo();
+            }
+
+            // Aumentar velocidad progresivamente
+            if (frameCount % 600 === 0 && velocidadJuego < 4.2) {
+                velocidadJuego += 0.2;
+            }
+
+            // Mover y dibujar obstáculos
+            for (let i = obstaculos.length - 1; i >= 0; i--) {
+                const obs = obstaculos[i];
+                obs.x -= velocidadJuego;
+
+                // Colores degradados para las columnas/barreras
+                ctx.fillStyle = "rgba(255, 182, 193, 0.85)";
+                
+                // Tubo superior
+                ctx.beginPath();
+                ctx.roundRect(obs.x, 0, obs.ancho, obs.altoSup, [0, 0, 10, 10]);
+                ctx.fill();
+
+                // Tubo inferior
+                ctx.beginPath();
+                ctx.roundRect(obs.x, canvas.height - obs.altoInf, obs.ancho, obs.altoInf, [10, 10, 0, 0]);
+                ctx.fill();
+
+                // Colisión precisa
+                const colisionX = cinna.x + cinna.w > obs.x + 4 && cinna.x + 4 < obs.x + obs.ancho;
+                const colisionY = cinna.y + 4 < obs.altoSup || cinna.y + cinna.h - 4 > canvas.height - obs.altoInf;
+
+                if (colisionX && colisionY) {
+                    finalizarJuego();
+                    return;
+                }
+
+                // Sumar puntos
+                if (!obs.pasado && obs.x + obs.ancho < cinna.x) {
+                    obs.pasado = true;
+                    puntos++;
+                }
+
+                // Eliminar obstáculos fuera de pantalla
+                if (obs.x + obs.ancho < 0) {
+                    obstaculos.splice(i, 1);
+                }
+            }
+
+            // Colisión con suelo o techo
+            if (cinna.y + cinna.h >= canvas.height || cinna.y <= 0) {
+                finalizarJuego();
+                return;
+            }
+
+            // Dibujar Marcador
+            ctx.fillStyle = "white";
+            ctx.font = "bold 22px 'Segoe UI', sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(`✨ ${puntos}`, canvas.width / 2, 40);
+
+            frameCount++;
+            animId = requestAnimationFrame(bucleJuego);
+        }
+    </script>
+</body>
+</html>

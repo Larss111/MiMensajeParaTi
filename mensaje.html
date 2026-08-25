@@ -32,6 +32,32 @@
             margin: auto; 
         }
 
+        /* Botón flotante para la música */
+        #btnMusica {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 20px;
+            cursor: pointer;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        #btnMusica:active {
+            transform: scale(0.9);
+        }
+
         #mensajeRevelado {
             position: relative; 
             background: rgba(255, 255, 255, 0.95);
@@ -46,21 +72,43 @@
         }
 
         #contenidoFinal {
-            padding: 10px;
+            padding: 15px;
         }
 
         #contenidoFinal h3 {
             color: #d81b60; 
             margin-top: 2px;
-            margin-bottom: 3px;
+            margin-bottom: 8px;
             text-align: center;
         }
 
         .imagen-mensaje {
             width: 100%;
-            border-radius: 30px;
-            margin: 5px 0;
+            border-radius: 20px;
+            margin: 5px 0 12px 0;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        #textoEscribir {
+            line-height: 1.6;
+            margin: 0;
+            font-size: 15px;
+            color: #444;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 15px;
+            background-color: #d81b60;
+            margin-left: 3px;
+            vertical-align: middle;
+            animation: parpadeo 0.8s infinite;
+        }
+
+        @keyframes parpadeo {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
         }
 
         #contenedorTarjetas {
@@ -139,12 +187,16 @@
     </style>
 </head>
 <body>
+    <button id="btnMusica" title="Música">🔇</button>
+
+    <audio id="musicaFondo" src="musica/musica.mp3" loop preload="auto"></audio>
+
     <div class="contenedor">
         <div id="mensajeRevelado">
             <div id="contenidoFinal">
                 <h3>✨ ¡Bienvenida niña preciosaa! ✨</h3>
                 <img src="imagenes/nosotros.jpeg" alt="Nosotros" class="imagen-mensaje">
-                <p></p>
+                <p id="textoEscribir"><span class="cursor" id="cursorAnim"></span></p>
             </div>
             <div id="contenedorTarjetas"></div>
         </div>
@@ -152,19 +204,56 @@
 
     <script>
         const contenedorTarjetas = document.getElementById('contenedorTarjetas');
+        const elementoTexto = document.getElementById('textoEscribir');
+        const cursor = document.getElementById('cursorAnim');
+        const audio = document.getElementById('musicaFondo');
+        const btnMusica = document.getElementById('btnMusica');
+
+        let reproduciendo = false;
+
+        function toggleMusica() {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    btnMusica.innerText = '🎵';
+                    reproduciendo = true;
+                }).catch(() => {});
+            } else {
+                audio.pause();
+                btnMusica.innerText = '🔇';
+                reproduciendo = false;
+            }
+        }
+
+        btnMusica.addEventListener('click', toggleMusica);
+
+        const dedicatoria = "Hola mi niña preciosa te traigo otra vez aca para para darte las gracias por estos 13 meses llenos de emociones que jamás olvidare, por cada momento compartido y por ser mi persona favorita en este vasto mundo. Cada segundo a tu lado es un regalo y no imaginas lo feliz que me hace tenerte en mi vida. Se que aun somos jovenes pero tengo muy en claro que quiero compartir esta vida contigo, hoy cumplimos un mes mas y deseo mucho que vayamos por mas tiempo y momentos juntos, eres todo lo que habia soñado, te amooo demasiado mi Cielo<3";
 
         const datosTarjetas = [
             { frase: "Eres la niña que me tiene encantado💓​", color: "#D8BFD8", img: "imagenes/foto1.png" },
-            { frase: "Mis dias son tan felices con tan solo pensar en ti🙂​", color: "#E6E6FA", img: "imagenesKuromi.png" },
-            { frase: "Amo cuando te tengo en mis brazos😍​", color: "#FFD1DC", img: "kity.webp" },
+            { frase: "Mis dias son tan felices con tan solo pensar en ti🙂​", color: "#E6E6FA", img: "imagenes/Kuromi.png" },
+            { frase: "Amo cuando te tengo en mis brazos😍​", color: "#FFD1DC", img: "imagenes/kity.webp" },
             { frase: "Eres mucho mas de lo que pude desear​🩷​", color: "#FFB6C1", img: "imagenes/melody.webp" },
             { frase: "Deseo estar contigo toda la vida💖", color: "#B0E0E6", img: "imagenes/nev.webp" },
             { frase: "Eres lo mejor y lo mas bonito de mi mundo💞​", color: "#89CFF0", img: "imagenes/cyna.webp" }
         ];
 
+        function escribirTexto(texto, elemento, i = 0) {
+            if (i < texto.length) {
+                elemento.insertBefore(document.createTextNode(texto.charAt(i)), cursor);
+                setTimeout(() => escribirTexto(texto, elemento, i + 1), 45);
+            } else {
+                cursor.style.display = 'none';
+                lanzarConfetiFinal();
+            }
+        }
+
         function lanzarConfeti() {
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6, x: 0.2 }, colors: ['#ff69b4', '#ff1493', '#ffffff'] });
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6, x: 0.8 }, colors: ['#ff69b4', '#ff1493', '#ffffff'] });
+        }
+
+        function lanzarConfetiFinal() {
+            confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 }, colors: ['#ff69b4', '#ffd700', '#ff1493', '#ffffff'] });
         }
 
         function inicializarTarjetas() {
@@ -204,6 +293,15 @@
                         if (tarjetasOcultas === datosTarjetas.length) {
                             setTimeout(() => {
                                 contenedorTarjetas.style.pointerEvents = 'none';
+                                
+                                // Inicia la música automáticamente
+                                audio.play().then(() => {
+                                    btnMusica.innerText = '🎵';
+                                    reproduciendo = true;
+                                }).catch(() => {});
+
+                                // Inicia la escritura de la carta
+                                escribirTexto(dedicatoria, elementoTexto);
                             }, 500);
                         }
                     }
@@ -213,7 +311,6 @@
             });
         }
 
-        // Ejecutar funciones al cargar la página
         window.onload = () => {
             inicializarTarjetas();
             setTimeout(lanzarConfeti, 500); 
