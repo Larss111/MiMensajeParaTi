@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para ti...</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 40px 0; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            text-align: center;
+            overflow-y: auto; 
+            overflow-x: hidden; 
+            box-sizing: border-box;
+        }
+
+        .contenedor {
+            width: 90%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: auto; 
+        }
+
+        #mensajeRevelado {
+            position: relative; 
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            border-radius: 20px;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: fadeIn 1.2s ease;
+            text-align: justify;
+            overflow: hidden; 
+            width: 100%;
+        }
+
+        #contenidoFinal {
+            padding: 10px;
+        }
+
+        #contenidoFinal h3 {
+            color: #d81b60; 
+            margin-top: 2px;
+            margin-bottom: 3px;
+            text-align: center;
+        }
+
+        .imagen-mensaje {
+            width: 100%;
+            border-radius: 30px;
+            margin: 5px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        #contenedorTarjetas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); 
+            grid-template-rows: repeat(3, 1fr);    
+        }
+
+        .tarjeta-wrapper {
+            perspective: 1000px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .tarjeta {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s, opacity 0.5s ease-out;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .tarjeta.volteada {
+            transform: rotateY(180deg);
+        }
+
+        .tarjeta.oculta {
+            opacity: 0;
+            pointer-events: none;
+            transform: rotateY(180deg) scale(0.8);
+        }
+
+        .tarjeta-cara {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 10px; 
+        }
+
+        .tarjeta-dorso {
+            background-color: #fff;
+            transform: rotateY(180deg);
+            color: #d81b60;
+            border: 2px solid #f8bbd0;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+        }
+
+        .img-tarjeta {
+            max-width: 100%;  
+            max-height: 100%; 
+            width: auto;      
+            height: auto;     
+            object-fit: contain; 
+            border-radius: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <div id="mensajeRevelado">
+            <div id="contenidoFinal">
+                <h3>✨ ¡Bienvenida niña preciosaa! ✨</h3>
+                <img src="imagenes/nosotros.jpeg" alt="Nosotros" class="imagen-mensaje">
+                <p></p>
+            </div>
+            <div id="contenedorTarjetas"></div>
+        </div>
+    </div>
+
+    <script>
+        const contenedorTarjetas = document.getElementById('contenedorTarjetas');
+
+        const datosTarjetas = [
+            { frase: "Eres la niña que me tiene encantado💓​", color: "#D8BFD8", img: "imagenes/foto1.png" },
+            { frase: "Mis dias son tan felices con tan solo pensar en ti🙂​", color: "#E6E6FA", img: "imagenesKuromi.png" },
+            { frase: "Amo cuando te tengo en mis brazos😍​", color: "#FFD1DC", img: "kity.webp" },
+            { frase: "Eres mucho mas de lo que pude desear​🩷​", color: "#FFB6C1", img: "imagenes/melody.webp" },
+            { frase: "Deseo estar contigo toda la vida💖", color: "#B0E0E6", img: "imagenes/nev.webp" },
+            { frase: "Eres lo mejor y lo mas bonito de mi mundo💞​", color: "#89CFF0", img: "imagenes/cyna.webp" }
+        ];
+
+        function lanzarConfeti() {
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6, x: 0.2 }, colors: ['#ff69b4', '#ff1493', '#ffffff'] });
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6, x: 0.8 }, colors: ['#ff69b4', '#ff1493', '#ffffff'] });
+        }
+
+        function inicializarTarjetas() {
+            let tarjetasOcultas = 0;
+
+            datosTarjetas.forEach((dato) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'tarjeta-wrapper';
+                
+                const tarjeta = document.createElement('div');
+                tarjeta.className = 'tarjeta';
+                
+                const frente = document.createElement('div');
+                frente.className = 'tarjeta-cara tarjeta-frente';
+                frente.style.backgroundColor = dato.color;
+                
+                const imagenTarjeta = document.createElement('img');
+                imagenTarjeta.src = dato.img;
+                imagenTarjeta.className = 'img-tarjeta';
+                frente.appendChild(imagenTarjeta);
+                
+                const dorso = document.createElement('div');
+                dorso.className = 'tarjeta-cara tarjeta-dorso';
+                dorso.innerText = dato.frase;
+
+                tarjeta.appendChild(frente);
+                tarjeta.appendChild(dorso);
+                wrapper.appendChild(tarjeta);
+                
+                tarjeta.addEventListener('click', function() {
+                    if (!this.classList.contains('volteada')) {
+                        this.classList.add('volteada');
+                    } else if (!this.classList.contains('oculta')) {
+                        this.classList.add('oculta');
+                        tarjetasOcultas++;
+                        
+                        if (tarjetasOcultas === datosTarjetas.length) {
+                            setTimeout(() => {
+                                contenedorTarjetas.style.pointerEvents = 'none';
+                            }, 500);
+                        }
+                    }
+                });
+
+                contenedorTarjetas.appendChild(wrapper);
+            });
+        }
+
+        // Ejecutar funciones al cargar la página
+        window.onload = () => {
+            inicializarTarjetas();
+            setTimeout(lanzarConfeti, 500); 
+        };
+    </script>
+</body>
+</html>
