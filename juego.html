@@ -120,22 +120,18 @@
     <div id="juegoContenedor">
         <a href="index.html" id="btnVolver">← Inicio</a>
         
-        <!-- Elemento de Audio para los puntos -->
         <audio id="sonidoPunto" src="musica/puntos.mp3" preload="auto"></audio>
-
-        <!-- Elemento para reproducir el GIF en tiempo real -->
         <img src="imagenes/cina.gif" id="personajeGif" alt="Cinnamoroll">
         
         <canvas id="canvasJuego" width="360" height="540"></canvas>
 
-        <!-- Pantalla Inicio -->
         <div id="pantallaInicio" class="overlay">
             <h1>☁️ Cinnamoroll Fly ☁️</h1>
             <p>Toca la pantalla para elevarte y esquivar los obstáculos.</p>
             <button class="btn-juego" onclick="iniciarJuego()">¡Empezar!</button>
         </div>
 
-        <!-- Pantalla Game Over -->
+        -- game over 
         <div id="pantallaFin" class="overlay" style="display: none;">
             <h1 style="color: #ff6b6b;">¡Ups! 💔</h1>
             <p id="puntosFinales">Puntuación: 0</p>
@@ -155,7 +151,7 @@
         const puntosFinales = document.getElementById('puntosFinales');
         const recordFinal = document.getElementById('recordFinal');
         const personajeGif = document.getElementById('personajeGif');
-        const sonidoPunto = document.getElementById('sonidoPunto'); // Captura el audio
+        const sonidoPunto = document.getElementById('sonidoPunto'); 
 
         let juegoActivo = false;
         let animId;
@@ -193,7 +189,7 @@
             }
         }
 
-        // Controles táctiles y teclado
+        // controles tactiles y teclado
         window.addEventListener('touchstart', (e) => {
             if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') {
                 saltar();
@@ -258,7 +254,7 @@
         function bucleJuego() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Dibujar estrellas de fondo
+            // estrellas de fondo
             ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
             estrellas.forEach(e => {
                 ctx.beginPath();
@@ -266,25 +262,24 @@
                 ctx.fill();
             });
 
-            // Física del personaje
+            // fisica del personaje
             cinna.velocidad += cinna.gravedad;
             cinna.y += cinna.velocidad;
 
-            // Posicionar el GIF en base a las coordenadas del juego
             personajeGif.style.left = cinna.x + 'px';
             personajeGif.style.top = cinna.y + 'px';
 
-            // Crear obstáculos periódicamente
+            // crear obstaculos 
             if (frameCount % 100 === 0) {
                 crearObstaculo();
             }
 
-            // Aumentar velocidad progresivamente
+            // aumentar velocidad progresivamente
             if (frameCount % 600 === 0 && velocidadJuego < 4.2) {
                 velocidadJuego += 0.2;
             }
 
-            // Mover y dibujar obstáculos
+            // mover y dibujar obstaculos
             for (let i = obstaculos.length - 1; i >= 0; i--) {
                 const obs = obstaculos[i];
                 obs.x -= velocidadJuego;
@@ -292,17 +287,17 @@
                 // Colores degradados para las columnas/barreras
                 ctx.fillStyle = "rgba(255, 182, 193, 0.85)";
                 
-                // Tubo superior
+                // tubo superior
                 ctx.beginPath();
                 ctx.roundRect(obs.x, 0, obs.ancho, obs.altoSup, [0, 0, 10, 10]);
                 ctx.fill();
 
-                // Tubo inferior
+                // tubo inferior
                 ctx.beginPath();
                 ctx.roundRect(obs.x, canvas.height - obs.altoInf, obs.ancho, obs.altoInf, [10, 10, 0, 0]);
                 ctx.fill();
 
-                // Colisión precisa
+                // colision
                 const colisionX = cinna.x + cinna.w > obs.x + 4 && cinna.x + 4 < obs.x + obs.ancho;
                 const colisionY = cinna.y + 4 < obs.altoSup || cinna.y + cinna.h - 4 > canvas.height - obs.altoInf;
 
@@ -311,29 +306,29 @@
                     return;
                 }
 
-                // Sumar puntos
+                // sumar puntos
                 if (!obs.pasado && obs.x + obs.ancho < cinna.x) {
                     obs.pasado = true;
                     puntos++;
                     
-                    // Reproducir el sonido al anotar
-                    sonidoPunto.currentTime = 0; // Reinicia el audio por si se solapa
-                    sonidoPunto.play().catch(() => {}); // catch para evitar errores si el navegador bloquea el autoplay
+                    // reproducir el sonido al anotar
+                    sonidoPunto.currentTime = 0; 
+                    sonidoPunto.play().catch(() => {}); 
                 }
 
-                // Eliminar obstáculos fuera de pantalla
+                // eliminar obstaculos fuera de pantalla
                 if (obs.x + obs.ancho < 0) {
                     obstaculos.splice(i, 1);
                 }
             }
 
-            // Colisión con suelo o techo
+            // colision con suelo o techo
             if (cinna.y + cinna.h >= canvas.height || cinna.y <= 0) {
                 finalizarJuego();
                 return;
             }
 
-            // Dibujar Marcador
+            // dibujar Marcador
             ctx.fillStyle = "white";
             ctx.font = "bold 22px 'Segoe UI', sans-serif";
             ctx.textAlign = "center";
