@@ -294,13 +294,11 @@
                             setTimeout(() => {
                                 contenedorTarjetas.style.pointerEvents = 'none';
                                 
-                                // Inicia la música automáticamente
                                 audio.play().then(() => {
                                     btnMusica.innerText = '🎵';
                                     reproduciendo = true;
                                 }).catch(() => {});
 
-                                // Inicia la escritura de la carta
                                 escribirTexto(dedicatoria, elementoTexto);
                             }, 500);
                         }

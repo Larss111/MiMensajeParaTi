@@ -43,7 +43,6 @@
             height: 100%;
         }
 
-        /* GIF del personaje superpuesto */
         #personajeGif {
             position: absolute;
             width: 46px;
@@ -54,7 +53,6 @@
             transform-origin: center center;
         }
 
-        /* Botón superior de volver */
         #btnVolver {
             position: absolute;
             top: 15px;
@@ -71,7 +69,6 @@
             z-index: 50;
         }
 
-        /* Pantallas superpuestas (Inicio y Game Over) */
         .overlay {
             position: absolute;
             top: 0;
@@ -174,7 +171,7 @@
         let frameCount = 0;
         let velocidadJuego = 2.2;
 
-        // fondo de estrellas estáticas
+        // fondo de estrellas 
         for (let i = 0; i < 30; i++) {
             estrellas.push({
                 x: Math.random() * canvas.width,
@@ -254,7 +251,6 @@
         function bucleJuego() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // estrellas de fondo
             ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
             estrellas.forEach(e => {
                 ctx.beginPath();
@@ -284,7 +280,6 @@
                 const obs = obstaculos[i];
                 obs.x -= velocidadJuego;
 
-                // Colores degradados para las columnas/barreras
                 ctx.fillStyle = "rgba(255, 182, 193, 0.85)";
                 
                 // tubo superior
@@ -311,12 +306,11 @@
                     obs.pasado = true;
                     puntos++;
                     
-                    // reproducir el sonido al anotar
+                    // reproducir sonido 
                     sonidoPunto.currentTime = 0; 
                     sonidoPunto.play().catch(() => {}); 
                 }
 
-                // eliminar obstaculos fuera de pantalla
                 if (obs.x + obs.ancho < 0) {
                     obstaculos.splice(i, 1);
                 }
@@ -328,7 +322,7 @@
                 return;
             }
 
-            // dibujar Marcador
+            // Marcador
             ctx.fillStyle = "white";
             ctx.font = "bold 22px 'Segoe UI', sans-serif";
             ctx.textAlign = "center";
